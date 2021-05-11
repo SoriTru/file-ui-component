@@ -18,6 +18,7 @@
 
 table {
   width: 100%;
+  font-size: small;
 }
 
 th {
@@ -35,10 +36,32 @@ th {
   margin: 0.5em;
 }
 
-.arrow {
+.arrow_container {
   grid-area: arrow;
   width: 1em;
   cursor: pointer;
+}
+
+.arrow {
+  height: 1em;
+  vertical-align: middle;
+}
+
+.arrow:hover {
+  animation: rotate_down 0.5s forwards;
+}
+
+@keyframes rotate_down {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(90deg);
+  }
+}
+
+.folder-icon {
 }
 
 .docname {
@@ -48,4 +71,20 @@ th {
 
 .doclist {
   grid-area: subfolders;
+}
+
+.file_icon {
+  width: 1em;
+  height: 1em;
+  border: 1px solid black;
+  display: flex;
+  align-items: center;
+}
+
+.file_icon_text {
+  font-size: x-small;
+  position: absolute;
+  margin: 0 0 0 0.3em;
+  background: white;
+  vertical-align: middle;
 }

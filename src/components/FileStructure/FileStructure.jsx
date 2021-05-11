@@ -1,39 +1,12 @@
 import React, { Component } from "react";
 
 import styles from "./FileStructure.module.css";
+import caret from "./caret.png";
+import folderIcon from "./folder.png";
 
 class FileStructure extends Component {
   constructor(props) {
     super(props);
-
-    this.testFile1 = {
-      type: "file",
-      name: "test.txt",
-      size: 5,
-      modified: new Date(),
-    };
-
-    this.testFile2 = {
-      type: "file",
-      name: "test.pdf",
-      size: 17,
-      modified: new Date(),
-    };
-
-    this.testFolder1 = {
-      type: "folder",
-      name: "Subfolder",
-      modified: new Date(),
-      size: 0,
-      children: [this.testFile1, this.testFile2],
-    };
-
-    this.testFolder = {
-      type: "folder",
-      name: "Documents",
-      modified: new Date(),
-      children: [this.testFolder1, this.testFile1, this.testFile2],
-    };
 
     this.state = { selectedFolder: null };
   }
@@ -48,7 +21,24 @@ class FileStructure extends Component {
     if (!this.state.selectedFolder.children) {
       return (
         <tr>
-          <td>{this.state.selectedFolder.type === "file" ? "FI" : "FO"}</td>
+          <td>
+            {this.state.selectedFolder.type === "file" ? (
+              <div className={styles.file_icon}>
+                <p className={styles.file_icon_text}>
+                  {this.state.selectedFolder.name.match(/\.[0-9a-z]+$/i)[0]}
+                </p>
+              </div>
+            ) : (
+              <img
+                src={folderIcon}
+                style={{
+                  height: "1.2em",
+                  margin: "0 .25em",
+                  verticalAlign: "middle",
+                }}
+              />
+            )}
+          </td>
           <td>{this.state.selectedFolder.name}</td>
           <td>{`${this.state.selectedFolder.modified.getMonth()}/${this.state.selectedFolder.modified.getDate()}/${this.state.selectedFolder.modified.getFullYear()}`}</td>
           <td style={{ textAlign: "right" }}>
@@ -64,8 +54,24 @@ class FileStructure extends Component {
     return this.state.selectedFolder.children.map((node, index) => {
       return (
         <tr key={index}>
-          {/*TODO: replace with actual icons*/}
-          <td>{node.type === "file" ? "FI" : "FO"}</td>
+          <td>
+            {node.type === "file" ? (
+              <div className={styles.file_icon}>
+                <p className={styles.file_icon_text}>
+                  {node.name.match(/\.[0-9a-z]+$/i)[0]}
+                </p>
+              </div>
+            ) : (
+              <img
+                src={folderIcon}
+                style={{
+                  height: "1.2em",
+                  margin: "0 .25em",
+                  verticalAlign: "middle",
+                }}
+              />
+            )}
+          </td>
           <td
             onClick={() => this.setFolder(node)}
             style={{ cursor: "pointer" }}
@@ -89,16 +95,32 @@ class FileStructure extends Component {
     return (
       <div className={styles.grid_container}>
         <div className={styles.tree_column}>
-          <TreeItem folder={this.testFolder} setFolder={this.setFolder} />
+          <TreeItem folder={this.props.rootFolder} setFolder={this.setFolder} />
         </div>
         <div className={styles.list_column}>
           <table>
             <thead>
               <tr>
-                <th />
-                <th>Name</th>
-                <th>Date Modified</th>
-                <th style={{ textAlign: "right" }}>File Size</th>
+                <th style={{ width: "10%" }} />
+                <th style={{ width: "60%" }}>Name</th>
+                <th
+                  style={{
+                    width: "1%",
+                    whiteSpace: "nowrap",
+                    paddingRight: "1em",
+                  }}
+                >
+                  Date Modified
+                </th>
+                <th
+                  style={{
+                    textAlign: "right",
+                    width: "1%",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  File Size
+                </th>
               </tr>
             </thead>
             <tbody>{this.displaySelectedFolder()}</tbody>
@@ -134,17 +156,29 @@ class TreeItem extends Component {
     return (
       <div className={styles.file_grid}>
         <div
-          className={styles.arrow}
+          className={styles.arrow_container}
           onClick={() => {
             this.setState({ childrenVisible: !this.state.childrenVisible });
           }}
         >
-          {this.props.folder.children ? "V" : ""}
+          {this.props.folder.children ? (
+            <img src={caret} className={styles.arrow} />
+          ) : (
+            ""
+          )}
         </div>
         <div
           className={styles.docname}
           onClick={() => this.props.setFolder(this.props.folder)}
         >
+          <img
+            src={folderIcon}
+            style={{
+              height: "1.2em",
+              margin: "0 .25em",
+              verticalAlign: "middle",
+            }}
+          />
           {this.props.folder.name}
         </div>
         <div
