@@ -1,0 +1,20 @@
+.grid_container {
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-template-areas: "file-tree file-list";
+}
+
+.tree_column {
+  grid-area: file-tree;
+  border: 1px solid black;
+}
+
+.list_column {
+  grid-area: file-list;
+  border: 1px solid red;
+}
+
+table {
+  width: 100%;
+}
