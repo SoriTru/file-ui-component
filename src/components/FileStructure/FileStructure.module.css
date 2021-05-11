@@ -12,9 +12,38 @@
 
 .list_column {
   grid-area: file-list;
-  border: 1px solid red;
+  border: 1px solid black;
+  border-left: none;
 }
 
 table {
   width: 100%;
+}
+
+th {
+  text-align: left;
+  font-weight: normal;
+}
+
+.file_grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: min-content min-content;
+  grid-template-areas:
+    "arrow docname"
+    ". subfolders";
+  margin: 0.5em;
+}
+
+.arrow {
+  grid-area: arrow;
+  width: 1em;
+}
+
+.docname {
+  grid-area: docname;
+}
+
+.doclist {
+  grid-area: subfolders;
 }
