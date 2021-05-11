@@ -1,4 +1,4 @@
-import FileStructure from "./components/FileStructure";
+import FileStructure from "./components/FileStructure/FileStructure";
 
 function App() {
   return (
