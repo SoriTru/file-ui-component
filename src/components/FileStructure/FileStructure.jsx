@@ -1,14 +1,18 @@
 import React, { Component } from "react";
 
 import styles from "./FileStructure.module.css";
-import caret from "./caret.png";
+import arrow from "./arrow.png";
 import folderIcon from "./folder.png";
 
 class FileStructure extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { selectedFolder: null };
+    this.state = {
+      selectedFolder: this.props.selectedFolder
+        ? this.props.selectedFolder
+        : null,
+    };
   }
 
   displaySelectedFolder = () => {
@@ -17,27 +21,16 @@ class FileStructure extends Component {
       return;
     }
 
-    // if the "folder" selected if just a file, display the file information
-    if (!this.state.selectedFolder.children) {
+    // if the "folder" selected is a file, only display file information
+    if (!this.state.selectedFolder.type === "file") {
       return (
         <tr>
           <td>
-            {this.state.selectedFolder.type === "file" ? (
-              <div className={styles.file_icon}>
-                <p className={styles.file_icon_text}>
-                  {this.state.selectedFolder.name.match(/\.[0-9a-z]+$/i)[0]}
-                </p>
-              </div>
-            ) : (
-              <img
-                src={folderIcon}
-                style={{
-                  height: "1.2em",
-                  margin: "0 .25em",
-                  verticalAlign: "middle",
-                }}
-              />
-            )}
+            <div className={styles.file_icon}>
+              <p className={styles.file_icon_text}>
+                {this.state.selectedFolder.name.match(/\.[0-9a-z]+$/i)[0]}
+              </p>
+            </div>
           </td>
           <td>{this.state.selectedFolder.name}</td>
           <td>{`${this.state.selectedFolder.modified.getMonth()}/${this.state.selectedFolder.modified.getDate()}/${this.state.selectedFolder.modified.getFullYear()}`}</td>
@@ -48,6 +41,11 @@ class FileStructure extends Component {
           </td>
         </tr>
       );
+    }
+
+    // if the folder contains no children, don't display anything
+    if (this.state.selectedFolder.children === undefined) {
+      return;
     }
 
     // display information for all children of the folder
@@ -69,11 +67,12 @@ class FileStructure extends Component {
                   margin: "0 .25em",
                   verticalAlign: "middle",
                 }}
+                alt={"selection arrow"}
               />
             )}
           </td>
           <td
-            onClick={() => this.setFolder(node)}
+            onClick={() => this.setSelectedFolder(node)}
             style={{ cursor: "pointer" }}
           >
             {node.name}
@@ -87,15 +86,20 @@ class FileStructure extends Component {
     });
   };
 
-  setFolder = (selectedFolder) => {
+  setSelectedFolder = (selectedFolder) => {
     this.setState({ selectedFolder: selectedFolder });
+    // alert parent of change to selected folder
+    this.props.getSelectedFolder(selectedFolder);
   };
 
   render() {
     return (
       <div className={styles.grid_container}>
         <div className={styles.tree_column}>
-          <TreeItem folder={this.props.rootFolder} setFolder={this.setFolder} />
+          <TreeItem
+            folder={this.props.rootFolder}
+            setSelectedFolder={this.setSelectedFolder}
+          />
         </div>
         <div className={styles.list_column}>
           <table>
@@ -142,16 +146,24 @@ class TreeItem extends Component {
 
   render() {
     let childFolders =
-      this.props.folder.children &&
-      this.props.folder.children.map((node, index) => {
-        return (
-          <TreeItem
-            folder={node}
-            key={index}
-            setFolder={this.props.setFolder}
-          />
-        );
-      });
+      this.props.folder.children !== undefined &&
+      this.props.folder.children
+        .map((node, index) => {
+          if (node.type === "folder") {
+            return (
+              <TreeItem
+                folder={node}
+                key={index}
+                setSelectedFolder={this.props.setSelectedFolder}
+              />
+            );
+          }
+
+          return null;
+        })
+        .filter((item) => {
+          return item !== null;
+        });
 
     return (
       <div className={styles.file_grid}>
@@ -161,18 +173,25 @@ class TreeItem extends Component {
             this.setState({ childrenVisible: !this.state.childrenVisible });
           }}
         >
-          {this.props.folder.children ? (
-            <img src={caret} className={styles.arrow} />
+          {childFolders.length > 0 ? (
+            <img
+              src={arrow}
+              className={
+                this.state.childrenVisible ? styles.arrow_down : styles.arrow
+              }
+              alt={"selection arrow"}
+            />
           ) : (
             ""
           )}
         </div>
         <div
           className={styles.docname}
-          onClick={() => this.props.setFolder(this.props.folder)}
+          onClick={() => this.props.setSelectedFolder(this.props.folder)}
         >
           <img
             src={folderIcon}
+            alt={"selection arrow"}
             style={{
               height: "1.2em",
               margin: "0 .25em",

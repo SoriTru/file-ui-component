@@ -3,6 +3,7 @@
   display: grid;
   grid-template-columns: 1fr 2fr;
   grid-template-areas: "file-tree file-list";
+  font-size: 0.9em;
 }
 
 .tree_column {
@@ -18,7 +19,6 @@
 
 table {
   width: 100%;
-  font-size: small;
 }
 
 th {
@@ -49,6 +49,11 @@ th {
 
 .arrow:hover {
   animation: rotate_down 0.5s forwards;
+}
+
+.arrow_down {
+  height: 1em;
+  transform: rotate(90deg);
 }
 
 @keyframes rotate_down {
