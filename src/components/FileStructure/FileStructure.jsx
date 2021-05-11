@@ -60,12 +60,18 @@ class FileStructure extends Component {
       );
     }
 
+    // display information for all children of the folder
     return this.state.selectedFolder.children.map((node, index) => {
       return (
         <tr key={index}>
           {/*TODO: replace with actual icons*/}
           <td>{node.type === "file" ? "FI" : "FO"}</td>
-          <td>{node.name}</td>
+          <td
+            onClick={() => this.setFolder(node)}
+            style={{ cursor: "pointer" }}
+          >
+            {node.name}
+          </td>
           <td>{`${node.modified.getMonth()}/${node.modified.getDate()}/${node.modified.getFullYear()}`}</td>
           <td style={{ textAlign: "right" }}>
             {node.type === "folder" ? "" : `${node.size} KB`}
