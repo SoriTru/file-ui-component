@@ -38,10 +38,12 @@ th {
 .arrow {
   grid-area: arrow;
   width: 1em;
+  cursor: pointer;
 }
 
 .docname {
   grid-area: docname;
+  cursor: pointer;
 }
 
 .doclist {

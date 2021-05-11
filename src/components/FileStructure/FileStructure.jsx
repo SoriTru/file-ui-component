@@ -35,47 +35,32 @@ class FileStructure extends Component {
       children: [this.testFolder1, this.testFile1, this.testFile2],
     };
 
-    this.state = { test: true };
+    this.state = { selectedFolder: null };
   }
 
-  // displayFileTree = (rootFolder) => {
-  //   let isExpanded = false;
-  //
-  //   let childFolders =
-  //     rootFolder.children &&
-  //     rootFolder.children.map((node) => {
-  //       return this.displayFileTree(node);
-  //     });
-  //
-  //   return (
-  //     <div className={styles.file_grid}>
-  //       <div
-  //         className={styles.arrow}
-  //         onClick={() => {
-  //           isExpanded = !isExpanded;
-  //           console.log(isExpanded);
-  //         }}
-  //       >
-  //         {rootFolder.children ? "V" : ""}
-  //       </div>
-  //       <div className={styles.docname}>{rootFolder.name}</div>
-  //       <div
-  //         className={styles.doclist}
-  //         style={{ display: isExpanded ? "" : "none" }}
-  //       >
-  //         {childFolders}
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
-  displaySelectedFolder = (selectedFolder) => {
-    // if the selected folder doesn't have content, don't display anything
-    if (!selectedFolder.children || selectedFolder.children.length === 0) {
+  displaySelectedFolder = () => {
+    // if there is no selected folder, don't display anything
+    if (!this.state.selectedFolder) {
       return;
     }
 
-    return selectedFolder.children.map((node, index) => {
+    // if the "folder" selected if just a file, display the file information
+    if (!this.state.selectedFolder.children) {
+      return (
+        <tr>
+          <td>{this.state.selectedFolder.type === "file" ? "FI" : "FO"}</td>
+          <td>{this.state.selectedFolder.name}</td>
+          <td>{`${this.state.selectedFolder.modified.getMonth()}/${this.state.selectedFolder.modified.getDate()}/${this.state.selectedFolder.modified.getFullYear()}`}</td>
+          <td style={{ textAlign: "right" }}>
+            {this.state.selectedFolder.type === "folder"
+              ? ""
+              : `${this.state.selectedFolder.size} KB`}
+          </td>
+        </tr>
+      );
+    }
+
+    return this.state.selectedFolder.children.map((node, index) => {
       return (
         <tr key={index}>
           {/*TODO: replace with actual icons*/}
@@ -90,11 +75,15 @@ class FileStructure extends Component {
     });
   };
 
+  setFolder = (selectedFolder) => {
+    this.setState({ selectedFolder: selectedFolder });
+  };
+
   render() {
     return (
       <div className={styles.grid_container}>
         <div className={styles.tree_column}>
-          <TreeItem folder={this.testFolder} />
+          <TreeItem folder={this.testFolder} setFolder={this.setFolder} />
         </div>
         <div className={styles.list_column}>
           <table>
@@ -106,7 +95,7 @@ class FileStructure extends Component {
                 <th style={{ textAlign: "right" }}>File Size</th>
               </tr>
             </thead>
-            <tbody>{this.displaySelectedFolder(this.testFolder)}</tbody>
+            <tbody>{this.displaySelectedFolder()}</tbody>
           </table>
         </div>
       </div>
@@ -127,7 +116,13 @@ class TreeItem extends Component {
     let childFolders =
       this.props.folder.children &&
       this.props.folder.children.map((node, index) => {
-        return <TreeItem folder={node} key={index} />;
+        return (
+          <TreeItem
+            folder={node}
+            key={index}
+            setFolder={this.props.setFolder}
+          />
+        );
       });
 
     return (
@@ -140,7 +135,12 @@ class TreeItem extends Component {
         >
           {this.props.folder.children ? "V" : ""}
         </div>
-        <div className={styles.docname}>{this.props.folder.name}</div>
+        <div
+          className={styles.docname}
+          onClick={() => this.props.setFolder(this.props.folder)}
+        >
+          {this.props.folder.name}
+        </div>
         <div
           className={styles.doclist}
           style={{ display: this.state.childrenVisible ? "block" : "none" }}
