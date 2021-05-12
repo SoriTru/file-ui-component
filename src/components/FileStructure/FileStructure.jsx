@@ -8,10 +8,12 @@ class FileStructure extends Component {
   constructor(props) {
     super(props);
 
+    // can send in a selected folder with props initially
     this.state = {
       selectedFolder: this.props.selectedFolder
         ? this.props.selectedFolder
         : null,
+      selectedFile: null,
     };
   }
 
@@ -22,7 +24,7 @@ class FileStructure extends Component {
     }
 
     // if the "folder" selected is a file, only display file information
-    if (!this.state.selectedFolder.type === "file") {
+    if (this.state.selectedFolder.type === "file") {
       return (
         <tr>
           <td>
@@ -72,7 +74,12 @@ class FileStructure extends Component {
             )}
           </td>
           <td
-            onClick={() => this.setSelectedFolder(node)}
+            onClick={() => {
+              // we want different functionality if there's a folder or a file selected
+              node.type === "file"
+                ? this.setState({ selectedFile: node })
+                : this.setSelectedFolder(node);
+            }}
             style={{ cursor: "pointer" }}
           >
             {node.name}
@@ -99,7 +106,7 @@ class FileStructure extends Component {
           <TreeItem
             folder={this.props.rootFolder}
             setSelectedFolder={this.setSelectedFolder}
-            selectedFolderName={this.state.selectedFolder.name}
+            selectedFolder={this.state.selectedFolder}
           />
         </div>
         <div className={styles.list_column}>
@@ -156,7 +163,7 @@ class TreeItem extends Component {
                 folder={node}
                 key={index}
                 setSelectedFolder={this.props.setSelectedFolder}
-                selectedFolderName={this.props.selectedFolderName}
+                selectedFolder={this.props.selectedFolder}
               />
             );
           }
@@ -166,6 +173,8 @@ class TreeItem extends Component {
         .filter((item) => {
           return item !== null;
         });
+
+    console.log(this.props.selectedFolder);
 
     return (
       <div className={styles.file_grid}>
@@ -193,7 +202,7 @@ class TreeItem extends Component {
             this.props.setSelectedFolder(this.props.folder);
           }}
           style={
-            this.props.selectedFolderName === this.props.folder.name
+            nodesAreEqual(this.props.selectedFolder, this.props.folder)
               ? { background: "lightgray" }
               : { background: "white" }
           }
@@ -218,6 +227,27 @@ class TreeItem extends Component {
       </div>
     );
   }
+}
+
+function nodesAreEqual(node1, node2) {
+  if (node1 === undefined || node2 === undefined) {
+    return false;
+  }
+  // note: since this doesn't take hierarchical order fully into account
+  // (since from a given node we don't necessarily know what its parents are)
+  // So not the best solution, but better than simply comparing file/folder names
+  console.log("Node 1: ", node1, "Node 2: ", node2);
+  return (
+    node1.type === node2.type &&
+    node1.name === node2.name &&
+    node1.modified.getTime() === node2.modified.getTime() &&
+    node1.size === node2.size &&
+    // this method of comparison for children isn't the best, but I implemented
+    // it this way to avoid overly long recursive comparisons that *could* have occurred
+    node1.children === node2.children &&
+    (node1.children === undefined ||
+      node1.children.length === node2.children.length)
+  );
 }
 
 export default FileStructure;

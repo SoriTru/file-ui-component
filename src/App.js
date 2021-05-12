@@ -42,8 +42,32 @@ function App() {
       {
         type: "folder",
         name: "Images",
-        size: 3,
+        size: 66,
         modified: new Date(),
+        children: [
+          {
+            type: "folder",
+            name: "Vacation",
+            size: 35,
+            modified: new Date(),
+            children: [
+              {
+                type: "folder",
+                name: "Rome",
+                size: 3,
+                modified: new Date(),
+                children: [
+                  {
+                    type: "file",
+                    name: "sevenhills.png",
+                    size: 33,
+                    modified: new Date(),
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
       {
         type: "file",
