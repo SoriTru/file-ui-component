@@ -1,3 +1,4 @@
+/* big picture format */
 .grid_container {
   height: 100vh;
   display: grid;
@@ -6,24 +7,59 @@
   font-size: 0.9em;
 }
 
-.tree_column {
-  grid-area: file-tree;
-  border: 1px solid black;
-}
-
 .list_column {
   grid-area: file-list;
   border: 1px solid black;
   border-left: none;
 }
 
+/* table styles */
 table {
   width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  border-bottom: 1px solid black;
+  line-height: 2em;
 }
 
 th {
   text-align: left;
   font-weight: normal;
+}
+
+td:first-child,
+th:first-child {
+  padding-left: 1em;
+}
+
+td:last-child,
+th:last-child {
+  padding-right: 1em;
+}
+
+/* table content */
+.file_icon {
+  width: 1em;
+  height: 1em;
+  border: 1px solid black;
+  display: flex;
+  align-items: center;
+}
+
+.file_icon_text {
+  font-size: x-small;
+  position: absolute;
+  margin: 0 0 0 0.3em;
+  background: white;
+  vertical-align: middle;
+}
+
+/* file tree */
+.tree_column {
+  grid-area: file-tree;
+  border: 1px solid black;
 }
 
 .file_grid {
@@ -66,9 +102,6 @@ th {
   }
 }
 
-.folder-icon {
-}
-
 .docname {
   grid-area: docname;
   cursor: pointer;
@@ -76,20 +109,4 @@ th {
 
 .doclist {
   grid-area: subfolders;
-}
-
-.file_icon {
-  width: 1em;
-  height: 1em;
-  border: 1px solid black;
-  display: flex;
-  align-items: center;
-}
-
-.file_icon_text {
-  font-size: x-small;
-  position: absolute;
-  margin: 0 0 0 0.3em;
-  background: white;
-  vertical-align: middle;
 }

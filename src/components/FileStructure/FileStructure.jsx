@@ -18,46 +18,39 @@ class FileStructure extends Component {
   }
 
   displaySelectedFolder = () => {
-    // if there is no selected folder, don't display anything
-    if (!this.state.selectedFolder) {
-      return;
-    }
-
-    // if the "folder" selected is a file, only display file information
-    if (this.state.selectedFolder.type === "file") {
-      return (
-        <tr>
-          <td>
-            <div className={styles.file_icon}>
-              <p className={styles.file_icon_text}>
-                {this.state.selectedFolder.name.match(/\.[0-9a-z]+$/i)[0]}
-              </p>
-            </div>
-          </td>
-          <td>{this.state.selectedFolder.name}</td>
-          <td>{`${this.state.selectedFolder.modified.getMonth()}/${this.state.selectedFolder.modified.getDate()}/${this.state.selectedFolder.modified.getFullYear()}`}</td>
-          <td style={{ textAlign: "right" }}>
-            {this.state.selectedFolder.type === "folder"
-              ? ""
-              : `${this.state.selectedFolder.size} KB`}
-          </td>
-        </tr>
-      );
-    }
-
-    // if the folder contains no children, don't display anything
-    if (this.state.selectedFolder.children === undefined) {
+    // if there is no selected folder or it has no children, don't display anything
+    if (
+      !this.state.selectedFolder ||
+      this.state.selectedFolder.children === undefined
+    ) {
       return;
     }
 
     // display information for all children of the folder
     return this.state.selectedFolder.children.map((node, index) => {
+      let nodeIsFile = node.type === "file";
+      let nodeIsSelected = nodesAreEqual(node, this.state.selectedFile);
+
       return (
-        <tr key={index}>
+        <tr
+          key={index}
+          style={
+            nodeIsFile && nodeIsSelected
+              ? { background: "lightgray" }
+              : { background: "white" }
+          }
+        >
           <td>
-            {node.type === "file" ? (
+            {nodeIsFile ? (
               <div className={styles.file_icon}>
-                <p className={styles.file_icon_text}>
+                <p
+                  className={styles.file_icon_text}
+                  style={
+                    nodeIsFile && nodeIsSelected
+                      ? { background: "lightgray" }
+                      : { background: "white" }
+                  }
+                >
                   {node.name.match(/\.[0-9a-z]+$/i)[0]}
                 </p>
               </div>
@@ -76,7 +69,7 @@ class FileStructure extends Component {
           <td
             onClick={() => {
               // we want different functionality if there's a folder or a file selected
-              node.type === "file"
+              nodeIsFile
                 ? this.setState({ selectedFile: node })
                 : this.setSelectedFolder(node);
             }}
@@ -86,7 +79,7 @@ class FileStructure extends Component {
           </td>
           <td>{`${node.modified.getMonth()}/${node.modified.getDate()}/${node.modified.getFullYear()}`}</td>
           <td style={{ textAlign: "right" }}>
-            {node.type === "folder" ? "" : `${node.size} KB`}
+            {nodeIsFile ? `${node.size} KB` : ""}
           </td>
         </tr>
       );
@@ -174,8 +167,6 @@ class TreeItem extends Component {
           return item !== null;
         });
 
-    console.log(this.props.selectedFolder);
-
     return (
       <div className={styles.file_grid}>
         <div
@@ -200,6 +191,7 @@ class TreeItem extends Component {
           className={styles.docname}
           onClick={() => {
             this.props.setSelectedFolder(this.props.folder);
+            this.setState({ childrenVisible: true });
           }}
           style={
             nodesAreEqual(this.props.selectedFolder, this.props.folder)
@@ -220,7 +212,9 @@ class TreeItem extends Component {
         </div>
         <div
           className={styles.doclist}
-          style={{ display: this.state.childrenVisible ? "block" : "none" }}
+          style={{
+            display: this.state.childrenVisible ? "block" : "none",
+          }}
         >
           {childFolders}
         </div>
@@ -230,13 +224,12 @@ class TreeItem extends Component {
 }
 
 function nodesAreEqual(node1, node2) {
-  if (node1 === undefined || node2 === undefined) {
+  if (!node1 || !node2) {
     return false;
   }
   // note: since this doesn't take hierarchical order fully into account
   // (since from a given node we don't necessarily know what its parents are)
   // So not the best solution, but better than simply comparing file/folder names
-  console.log("Node 1: ", node1, "Node 2: ", node2);
   return (
     node1.type === node2.type &&
     node1.name === node2.name &&
