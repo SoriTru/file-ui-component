@@ -99,6 +99,7 @@ class FileStructure extends Component {
           <TreeItem
             folder={this.props.rootFolder}
             setSelectedFolder={this.setSelectedFolder}
+            selectedFolderName={this.state.selectedFolder.name}
           />
         </div>
         <div className={styles.list_column}>
@@ -155,6 +156,7 @@ class TreeItem extends Component {
                 folder={node}
                 key={index}
                 setSelectedFolder={this.props.setSelectedFolder}
+                selectedFolderName={this.props.selectedFolderName}
               />
             );
           }
@@ -187,7 +189,14 @@ class TreeItem extends Component {
         </div>
         <div
           className={styles.docname}
-          onClick={() => this.props.setSelectedFolder(this.props.folder)}
+          onClick={() => {
+            this.props.setSelectedFolder(this.props.folder);
+          }}
+          style={
+            this.props.selectedFolderName === this.props.folder.name
+              ? { background: "lightgray" }
+              : { background: "white" }
+          }
         >
           <img
             src={folderIcon}
