@@ -31,11 +31,26 @@ th {
 
 td:first-child,
 th:first-child {
-  padding-left: 1em;
+  padding-left: 2em;
+  padding-right: 1em;
+  width: 10%;
 }
 
 td:last-child,
 th:last-child {
+  padding-right: 2em;
+  text-align: right;
+  width: 1%;
+  white-space: nowrap;
+}
+
+.name_column {
+  width: 60%;
+}
+
+.date_column {
+  width: 1%;
+  white-space: nowrap;
   padding-right: 1em;
 }
 
@@ -109,4 +124,31 @@ th:last-child {
 
 .doclist {
   grid-area: subfolders;
+}
+
+/* misc styling */
+.item_selected {
+  background: lightgrey;
+}
+
+.item_unselected {
+  background: white;
+}
+
+.folder_icon {
+  height: 1.2em;
+  margin: 0 0.25em;
+  vertical-align: middle;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}
+
+.visible {
+  display: block;
 }

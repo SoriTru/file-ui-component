@@ -34,22 +34,21 @@ class FileStructure extends Component {
       return (
         <tr
           key={index}
-          style={
+          className={
             nodeIsFile && nodeIsSelected
-              ? { background: "lightgray" }
-              : { background: "white" }
+              ? styles.item_selected
+              : styles.item_unselected
           }
         >
           <td>
             {nodeIsFile ? (
               <div className={styles.file_icon}>
                 <p
-                  className={styles.file_icon_text}
-                  style={
+                  className={`${styles.file_icon_text} ${
                     nodeIsFile && nodeIsSelected
-                      ? { background: "lightgray" }
-                      : { background: "white" }
-                  }
+                      ? styles.item_selected
+                      : styles.item_unselected
+                  }`}
                 >
                   {node.name.match(/\.[0-9a-z]+$/i)[0]}
                 </p>
@@ -57,11 +56,7 @@ class FileStructure extends Component {
             ) : (
               <img
                 src={folderIcon}
-                style={{
-                  height: "1.2em",
-                  margin: "0 .25em",
-                  verticalAlign: "middle",
-                }}
+                className={styles.folder_icon}
                 alt={"selection arrow"}
               />
             )}
@@ -73,14 +68,12 @@ class FileStructure extends Component {
                 ? this.setState({ selectedFile: node })
                 : this.setSelectedFolder(node);
             }}
-            style={{ cursor: "pointer" }}
+            className={styles.clickable}
           >
             {node.name}
           </td>
           <td>{`${node.modified.getMonth()}/${node.modified.getDate()}/${node.modified.getFullYear()}`}</td>
-          <td style={{ textAlign: "right" }}>
-            {nodeIsFile ? `${node.size} KB` : ""}
-          </td>
+          <td>{nodeIsFile ? `${node.size} KB` : ""}</td>
         </tr>
       );
     });
@@ -106,26 +99,10 @@ class FileStructure extends Component {
           <table>
             <thead>
               <tr>
-                <th style={{ width: "10%" }} />
-                <th style={{ width: "60%" }}>Name</th>
-                <th
-                  style={{
-                    width: "1%",
-                    whiteSpace: "nowrap",
-                    paddingRight: "1em",
-                  }}
-                >
-                  Date Modified
-                </th>
-                <th
-                  style={{
-                    textAlign: "right",
-                    width: "1%",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  File Size
-                </th>
+                <th />
+                <th className={styles.name_column}>Name</th>
+                <th className={styles.date_column}>Date Modified</th>
+                <th>File Size</th>
               </tr>
             </thead>
             <tbody>{this.displaySelectedFolder()}</tbody>
@@ -188,33 +165,27 @@ class TreeItem extends Component {
           )}
         </div>
         <div
-          className={styles.docname}
+          className={`${styles.docname} ${
+            nodesAreEqual(this.props.selectedFolder, this.props.folder)
+              ? styles.item_selected
+              : styles.item_unselected
+          }`}
           onClick={() => {
             this.props.setSelectedFolder(this.props.folder);
             this.setState({ childrenVisible: true });
           }}
-          style={
-            nodesAreEqual(this.props.selectedFolder, this.props.folder)
-              ? { background: "lightgray" }
-              : { background: "white" }
-          }
         >
           <img
             src={folderIcon}
             alt={"selection arrow"}
-            style={{
-              height: "1.2em",
-              margin: "0 .25em",
-              verticalAlign: "middle",
-            }}
+            className={styles.folder_icon}
           />
           {this.props.folder.name}
         </div>
         <div
-          className={styles.doclist}
-          style={{
-            display: this.state.childrenVisible ? "block" : "none",
-          }}
+          className={`${styles.doclist} ${
+            this.state.childrenVisible ? styles.visible : styles.hidden
+          }`}
         >
           {childFolders}
         </div>
