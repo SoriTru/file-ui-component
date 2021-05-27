@@ -5,31 +5,19 @@ import arrow from "./arrow.png";
 import folderIcon from "./folder.png";
 
 class FileStructure extends Component {
-  constructor(props) {
-    super(props);
-
-    // can send in a selected folder with props initially
-    this.state = {
-      selectedFolder: this.props.selectedFolder
-        ? this.props.selectedFolder
-        : null,
-      selectedFile: null,
-    };
-  }
-
   displaySelectedFolder = () => {
     // if there is no selected folder or it has no children, don't display anything
     if (
-      !this.state.selectedFolder ||
-      this.state.selectedFolder.children === undefined
+      !this.props.selectedFolder ||
+      this.props.selectedFolder.children === undefined
     ) {
       return;
     }
 
     // display information for all children of the folder
-    return this.state.selectedFolder.children.map((node, index) => {
+    return this.props.selectedFolder.children.map((node, index) => {
       let nodeIsFile = node.type === "file";
-      let nodeIsSelected = nodesAreEqual(node, this.state.selectedFile);
+      let nodeIsSelected = nodesAreEqual(node, this.props.selectedFile);
 
       return (
         <tr
@@ -63,10 +51,7 @@ class FileStructure extends Component {
           </td>
           <td
             onClick={() => {
-              // we want different functionality if there's a folder or a file selected
-              nodeIsFile
-                ? this.setState({ selectedFile: node })
-                : this.setSelectedFolder(node);
+              this.props.setSelected(node);
             }}
             className={styles.clickable}
           >
@@ -79,20 +64,14 @@ class FileStructure extends Component {
     });
   };
 
-  setSelectedFolder = (selectedFolder) => {
-    this.setState({ selectedFolder: selectedFolder });
-    // alert parent of change to selected folder
-    this.props.getSelectedFolder(selectedFolder);
-  };
-
   render() {
     return (
       <div className={styles.grid_container}>
         <div className={styles.tree_column}>
           <TreeItem
             folder={this.props.rootFolder}
-            setSelectedFolder={this.setSelectedFolder}
-            selectedFolder={this.state.selectedFolder}
+            setSelected={this.props.setSelected}
+            selectedFolder={this.props.selectedFolder}
           />
         </div>
         <div className={styles.list_column}>
@@ -132,7 +111,7 @@ class TreeItem extends Component {
               <TreeItem
                 folder={node}
                 key={index}
-                setSelectedFolder={this.props.setSelectedFolder}
+                setSelected={this.props.setSelected}
                 selectedFolder={this.props.selectedFolder}
               />
             );
@@ -171,7 +150,7 @@ class TreeItem extends Component {
               : styles.item_unselected
           }`}
           onClick={() => {
-            this.props.setSelectedFolder(this.props.folder);
+            this.props.setSelected(this.props.folder);
             this.setState({ childrenVisible: true });
           }}
         >
